@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.flopczak.WorkerTaskScheduler.worker.data.Worker;
 import pl.flopczak.WorkerTaskScheduler.worker.service.WorkerService;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class WorkerController {
     }
 
     @GetMapping
-    public List<Worker> getWorkers() {
-        return workerService.getWorkers();
+    public List<Worker> findAll() {
+        return workerService.findAll();
     }
 }
