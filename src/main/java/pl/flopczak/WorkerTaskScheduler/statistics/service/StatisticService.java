@@ -2,6 +2,8 @@ package pl.flopczak.WorkerTaskScheduler.statistics.service;
 
 import org.springframework.stereotype.Service;
 import pl.flopczak.WorkerTaskScheduler.statistics.data.Statistic;
+import pl.flopczak.WorkerTaskScheduler.statistics.data.StatisticDTO;
+import pl.flopczak.WorkerTaskScheduler.statistics.data.StatisticsMapper;
 import pl.flopczak.WorkerTaskScheduler.statistics.repository.StatisticRepository;
 
 import java.util.List;
@@ -16,7 +18,7 @@ public class StatisticService implements IStatisticService {
     }
 
     @Override
-    public List<Statistic> findAll() {
-        return (List<Statistic>) statisticRepository.findAll();
+    public List<StatisticDTO> findAll() {
+        return StatisticsMapper.toDto((List<Statistic>) statisticRepository.findAll());
     }
 }

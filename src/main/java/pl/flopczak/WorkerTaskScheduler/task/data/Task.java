@@ -1,10 +1,12 @@
 package pl.flopczak.WorkerTaskScheduler.task.data;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.flopczak.WorkerTaskScheduler.process.data.Process;
 
 @Entity
 @Table(name = "tasks")
@@ -14,8 +16,13 @@ import lombok.NoArgsConstructor;
 public class Task {
 
     @Id
-    @GeneratedValue(strategy =GenerationType.IDENTITY)
+    @GeneratedValue
     private Long taskId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PROCESS_ID", referencedColumnName = "PROCESS_ID")
+    @JsonBackReference
+    private Process process;
 
     private Integer type;
 
