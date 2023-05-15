@@ -19,4 +19,8 @@ public class ProcessService implements IProcessService {
     public List<Process> findAll() {
         return (List<Process>) processRepository.findAll();
     }
+
+    public Process updateProcess(Process process) {
+        return processRepository.save(process);
+    }
 }

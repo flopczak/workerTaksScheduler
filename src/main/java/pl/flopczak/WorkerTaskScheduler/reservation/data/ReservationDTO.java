@@ -3,6 +3,7 @@ package pl.flopczak.WorkerTaskScheduler.reservation.data;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.AlgorithmType;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class ReservationDTO {
 
     private Instant startTime;
     private Instant endTime;
+    private AlgorithmType algorithmType;
+    private Integer testNumber;
 
     public ReservationDTO(Reservation reservation) {
         this.reservationId = reservation.getReservationId();
@@ -28,6 +31,12 @@ public class ReservationDTO {
         this.workerName = reservation.getWorkerName();
         this.startTime = reservation.getStartTime();
         this.endTime = reservation.getEndTime();
+        this.algorithmType = reservation.getAlgorithmType();
+        this.testNumber = reservation.getTestNumber();
+    }
+
+    public static class ReservationDTOBuilder {
+        public ReservationDTOBuilder(){}
     }
 
     public static List<ReservationDTO> fromEntities(List<Reservation> reservations) {
@@ -39,6 +48,8 @@ public class ReservationDTO {
                     .taskType(reservation.getTaskType())
                     .startTime(reservation.getStartTime())
                     .endTime(reservation.getEndTime())
+                    .algorithmType(reservation.getAlgorithmType())
+                    .testNumber(reservation.getTestNumber())
                     .build();
             reservationDTOS.add(dto);
         }

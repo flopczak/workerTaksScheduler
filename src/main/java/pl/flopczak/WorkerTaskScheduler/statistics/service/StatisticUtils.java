@@ -1,11 +1,10 @@
 package pl.flopczak.WorkerTaskScheduler.statistics.service;
 
 import pl.flopczak.WorkerTaskScheduler.statistics.data.StatisticDTO;
+import pl.flopczak.WorkerTaskScheduler.task.data.Task;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class StatisticUtils {
     public static Instant estimatedEndTime(Integer estimatedTimeInSeconds, Instant startTime) {
@@ -20,6 +19,14 @@ public class StatisticUtils {
             }
         });
         return availableWorkers;
+    }
+
+    public static Integer getFastestWorkerForTask(Task task, List<StatisticDTO> statistics) {
+        Integer taskType = task.getType();
+        Optional<StatisticDTO> result = statistics.stream()
+                .filter(statistic -> Objects.equals(statistic.getTaskType(), taskType))
+                .min(Comparator.comparingInt(StatisticDTO::getEstimatedTimeInSeconds));
+        return result.isPresent() ? result.get().getWorkerName() : -1;
     }
 
 }

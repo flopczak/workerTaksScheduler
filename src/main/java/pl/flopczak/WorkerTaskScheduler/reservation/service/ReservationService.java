@@ -1,6 +1,7 @@
 package pl.flopczak.WorkerTaskScheduler.reservation.service;
 
 import org.springframework.stereotype.Service;
+import pl.flopczak.WorkerTaskScheduler.reservation.data.Reservation;
 import pl.flopczak.WorkerTaskScheduler.reservation.data.ReservationDTO;
 import pl.flopczak.WorkerTaskScheduler.reservation.repository.ReservationRepository;
 import pl.flopczak.WorkerTaskScheduler.statistics.data.StatisticDTO;
@@ -52,5 +53,12 @@ public class ReservationService implements IReservationService {
         }
 
         return StatisticUtils.getAviableWorkers(statistics,unavailableResources);
+    }
+
+    //może zwracać bool żeby było wiadomo czy się udało
+    //TODO dodać sprawdzenie rezerwacji
+    //TODO może w algortmie działać na liscie i potem dodawać całą listę rezerwacji a nie działać na bazie cały czas
+    public void makeReservation(Reservation reservation) {
+        reservationRepository.save(reservation);
     }
 }

@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.flopczak.WorkerTaskScheduler.process.data.Process;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "tasks")
 @AllArgsConstructor
@@ -25,5 +27,7 @@ public class Task {
     private Process process;
 
     private Integer type;
+
+    private Instant dueDate; //nie może być mniejsze niż due date procesu
 
 }

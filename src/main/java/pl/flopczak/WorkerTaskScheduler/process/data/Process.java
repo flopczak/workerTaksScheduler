@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import pl.flopczak.WorkerTaskScheduler.task.data.Task;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -14,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString(exclude = "taskList")
 public class Process {
 
     @Id
@@ -24,4 +27,6 @@ public class Process {
     @JsonManagedReference
     @OneToMany(mappedBy = "process", fetch = FetchType.EAGER)
     private List<Task> taskList;
+
+    private Instant dueDate;
 }
