@@ -23,6 +23,7 @@ public class ReservationDTO {
     private Instant startTime;
     private Instant endTime;
     private AlgorithmType algorithmType;
+    private Long taskId;
     private Integer testNumber;
 
     public ReservationDTO(Reservation reservation) {
@@ -32,6 +33,7 @@ public class ReservationDTO {
         this.startTime = reservation.getStartTime();
         this.endTime = reservation.getEndTime();
         this.algorithmType = reservation.getAlgorithmType();
+        this.taskId = reservation.getTaskId();
         this.testNumber = reservation.getTestNumber();
     }
 
@@ -50,6 +52,7 @@ public class ReservationDTO {
                     .endTime(reservation.getEndTime())
                     .algorithmType(reservation.getAlgorithmType())
                     .testNumber(reservation.getTestNumber())
+                    .taskId(reservation.getTaskId())
                     .build();
             reservationDTOS.add(dto);
         }
