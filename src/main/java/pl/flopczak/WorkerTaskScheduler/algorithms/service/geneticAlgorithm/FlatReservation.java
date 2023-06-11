@@ -1,0 +1,29 @@
+package pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.AlgorithmType;
+
+
+
+@Data
+@AllArgsConstructor
+@Builder
+public class FlatReservation {
+
+    private Long reservationId;
+
+    private Integer taskType;
+    private Integer workerName;
+
+    private Integer startTime;
+    private Integer endTime;
+    private AlgorithmType algorithmType;
+    private Long taskId;
+    private Integer testNumber;
+
+    public static class FlatReservationBuilder {
+        public FlatReservationBuilder(){}
+    }
+}

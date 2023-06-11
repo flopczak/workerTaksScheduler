@@ -21,29 +21,29 @@ public class GeneticAlgorithm {
         this.tasks = tasks;
     }
 
-    private void initializePopulation() {
-        //Inicjalizacja populacji na początek może byc losowa jednak lepiej może zadziałać zainicjalizowanie
-        //populacji jakąś heurystyką np najlepszą z pozostałych algorytmów testowanych w ramach pracy jako pojedyńczego osobnika>????
+//    private void initializePopulation() {
+//        //Inicjalizacja populacji na początek może byc losowa jednak lepiej może zadziałać zainicjalizowanie
+//        //populacji jakąś heurystyką np najlepszą z pozostałych algorytmów testowanych w ramach pracy jako pojedyńczego osobnika>????
+//
+//        for(int i = 0; i < GeneticAlgorithmConstans.POPULATION_SIZE; i++) {
+//            Individual individual = generateRandomGene(); //TODO zmień generateRandomGene na generateFromHeuristic
+//
+//        }
 
-        for(int i = 0; i < GeneticAlgorithmConstans.POPULATION_SIZE; i++) {
-            Individual individual = generateRandomGene(); //TODO zmień generateRandomGene na generateFromHeuristic
-
-        }
-
-    }
+//    }
 
     // jako że zaczynam od czystej kartki metody do sprawdzania czy pracownik jest dostepny powinny być tworzone na
     // podstawie listy "population"?
-    private Individual generateRandomGene() {
-        Individual individual = Individual.builder()
-                .availableTasks(tasks)
-                .schedule(new ArrayList<>())
-                .dueFitnesse(0)
-                .timeFitnesse(0)
-                .build();
-
-        return null;
-    }
+//    private Individual generateRandomGene() {
+//        Individual individual = Individual.builder()
+//                .availableTasks(tasks)
+//                .schedule(new ArrayList<>())
+//                .dueFitnesse(0)
+//                .timeFitnesse(0)
+//                .build();
+//
+//        return null;
+//    }
 
     //Przenieść do klasy Individual?
 

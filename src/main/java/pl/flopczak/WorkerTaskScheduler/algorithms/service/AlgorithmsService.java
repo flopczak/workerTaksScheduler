@@ -1,6 +1,7 @@
 package pl.flopczak.WorkerTaskScheduler.algorithms.service;
 
 import org.springframework.stereotype.Service;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.FlatIndividual;
 import pl.flopczak.WorkerTaskScheduler.process.data.Process;
 import pl.flopczak.WorkerTaskScheduler.process.service.ProcessService;
 import pl.flopczak.WorkerTaskScheduler.reservation.data.Reservation;
@@ -44,6 +45,11 @@ public class AlgorithmsService {
 
 
 
+    public FlatIndividual randomFlatIndividual() {
+        FlatIndividual toReturn = new FlatIndividual(taskService.findAll(), statisticService.findAll());
+        toReturn.generateRandomSchedule();
+        return toReturn;
+    }
 
 
     public List<ReservationDTO> startOptimisticAllocationConflicted() {

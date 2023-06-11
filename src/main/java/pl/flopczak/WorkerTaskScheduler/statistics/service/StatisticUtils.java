@@ -12,7 +12,7 @@ public class StatisticUtils {
         return Instant.ofEpochSecond(startTime.getEpochSecond() + estimatedTimeInSeconds);
     }
 
-    public static Set<Integer> getAviableWorkers(List<StatisticDTO> statistics, Set<Integer> unavailableWorkers) {
+    public static Set<Integer> getAvailableWorkers(List<StatisticDTO> statistics, Set<Integer> unavailableWorkers) {
         Set<Integer> availableWorkers = new HashSet<>();
         statistics.stream().forEach(statistic -> {
             if (!unavailableWorkers.contains(statistic.getWorkerName())) {

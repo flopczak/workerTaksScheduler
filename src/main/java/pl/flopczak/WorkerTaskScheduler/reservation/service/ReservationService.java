@@ -9,7 +9,6 @@ import pl.flopczak.WorkerTaskScheduler.statistics.service.StatisticService;
 import pl.flopczak.WorkerTaskScheduler.statistics.service.StatisticUtils;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,7 +51,7 @@ public class ReservationService implements IReservationService {
             }
         }
 
-        return StatisticUtils.getAviableWorkers(statistics,unavailableResources);
+        return StatisticUtils.getAvailableWorkers(statistics,unavailableResources);
     }
 
     //może zwracać bool żeby było wiadomo czy się udało
