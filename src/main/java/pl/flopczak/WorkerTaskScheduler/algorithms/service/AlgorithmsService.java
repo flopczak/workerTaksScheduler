@@ -2,6 +2,7 @@ package pl.flopczak.WorkerTaskScheduler.algorithms.service;
 
 import org.springframework.stereotype.Service;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.FlatIndividual;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.GeneticAlgorithm;
 import pl.flopczak.WorkerTaskScheduler.process.data.Process;
 import pl.flopczak.WorkerTaskScheduler.process.service.ProcessService;
 import pl.flopczak.WorkerTaskScheduler.reservation.data.Reservation;
@@ -39,11 +40,25 @@ public class AlgorithmsService {
     // czas zacząć napierdalać ALGORYTMY KUREWSKIE!!
 
 
-    private void schedule() {
 
+
+    public GeneticAlgorithm geneticAlgorithm() {
+        return new GeneticAlgorithm(taskService.findAll(), statisticService.findAll());
     }
 
+    public DepthFirstAlgorithm depthFirstAlgorithm() {
+        List<Process> processes = processService.findAll();
+        DepthFirstAlgorithm dp = new DepthFirstAlgorithm(statisticService.findAll(), taskService.findAll(), processes);
+        dp.scheduleTasks();
+        return dp;
+    }
 
+    public BreadthFirstAlgorithm breadthFirstAlgorithm() {
+        List<Process> processes = processService.findAll();
+        BreadthFirstAlgorithm bf = new BreadthFirstAlgorithm(statisticService.findAll(), taskService.findAll(), processes, statisticService);
+        bf.scheduleTasks();
+        return bf;
+    }
 
     public FlatIndividual randomFlatIndividual() {
         FlatIndividual toReturn = new FlatIndividual(taskService.findAll(), statisticService.findAll());

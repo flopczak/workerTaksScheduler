@@ -1,50 +1,91 @@
 package pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm;
 
-import pl.flopczak.WorkerTaskScheduler.algorithms.service.AlgorithmType;
+import lombok.Data;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.BreadthFirstAlgorithm;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.DepthFirstAlgorithm;
 import pl.flopczak.WorkerTaskScheduler.process.data.Process;
-import pl.flopczak.WorkerTaskScheduler.reservation.data.ReservationDTO;
+import pl.flopczak.WorkerTaskScheduler.statistics.data.StatisticDTO;
+import pl.flopczak.WorkerTaskScheduler.statistics.service.StatisticService;
 import pl.flopczak.WorkerTaskScheduler.task.data.Task;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+@Data
 public class GeneticAlgorithm {
-    private List<Individual> population;// czy to wgl nie powinna być lista list reservation
-    //potrzebne lista zadań do wyonania
+    private List<FlatIndividual> population;
+    private List<StatisticDTO> statistics;
     private List<Process> processes;
     private List<Task> tasks;
+    private StatisticService statisticService;
+    private Random random;
 
-    public GeneticAlgorithm(List<Process> processes, List<Task> tasks) {
-        population = new ArrayList<>();
-        this.processes = processes;
+
+    //TODO dodać fitness będący utylizacją czasu
+
+    public GeneticAlgorithm(List<Task> tasks, List<StatisticDTO> statistics, List<Process> processes, StatisticService statisticService) {
+        this.statistics = statistics;
         this.tasks = tasks;
+        population = initializePopulation();
+        this.random = new Random();
+        this.processes = processes;
+        this.statisticService = statisticService;
     }
 
-//    private void initializePopulation() {
-//        //Inicjalizacja populacji na początek może byc losowa jednak lepiej może zadziałać zainicjalizowanie
-//        //populacji jakąś heurystyką np najlepszą z pozostałych algorytmów testowanych w ramach pracy jako pojedyńczego osobnika>????
-//
-//        for(int i = 0; i < GeneticAlgorithmConstans.POPULATION_SIZE; i++) {
-//            Individual individual = generateRandomGene(); //TODO zmień generateRandomGene na generateFromHeuristic
-//
-//        }
+    private List<FlatIndividual> initializePopulation() {
+        List<FlatIndividual> toReturn = new ArrayList<>();
+        for(int i = 0; i < GeneticAlgorithmConstans.POPULATION_SIZE-2; i++) {
+            List<Task> taskCopy = new ArrayList<>(tasks);
+            FlatIndividual individual = new FlatIndividual(taskCopy,statistics);
+            individual.generateRandomSchedule();
+            toReturn.add(individual);
+        }
 
-//    }
+        DepthFirstAlgorithm dp = new DepthFirstAlgorithm(statistics, tasks, processes);
+        BreadthFirstAlgorithm bd = new BreadthFirstAlgorithm(statistics, tasks, processes, statisticService);
+        dp.scheduleTasks();
+        bd.scheduleTasks();
+        toReturn.add(random.nextInt(GeneticAlgorithmConstans.POPULATION_SIZE-2),dp.getIndividual());
+        toReturn.add(random.nextInt(GeneticAlgorithmConstans.POPULATION_SIZE-2),bd.getIndividual());
+        return toReturn;
+    }
 
-    // jako że zaczynam od czystej kartki metody do sprawdzania czy pracownik jest dostepny powinny być tworzone na
-    // podstawie listy "population"?
-//    private Individual generateRandomGene() {
-//        Individual individual = Individual.builder()
-//                .availableTasks(tasks)
-//                .schedule(new ArrayList<>())
-//                .dueFitnesse(0)
-//                .timeFitnesse(0)
-//                .build();
-//
-//        return null;
-//    }
+    private FlatIndividual tournamentSelection(Integer tournamentSize){
+        List<FlatIndividual> tournament = new ArrayList<>(tournamentSize);
 
-    //Przenieść do klasy Individual?
+
+        for (int i = 0; i < tournamentSize; i++) {
+            int randomIndex = random.nextInt(population.size());
+            tournament.add(population.get(randomIndex));
+        }
+
+        FlatIndividual best = tournament.get(0);
+
+        for (int i = 1; i < tournament.size(); i++) {
+            Double timeProtencage = best.getTimeFitnesse() / tournament.get(i).getTimeFitnesse();
+            Double dueProtencage = best.getDueFitnesse() / tournament.get(i).getDueFitnesse();
+            Double growth = timeProtencage + dueProtencage;
+            if (growth < 2) { // TODO to check
+                best = tournament.get(i);
+            }
+        }
+
+        return best;
+    }
+
+    private FlatIndividual crossover(FlatIndividual parent1, FlatIndividual parent2) {
+        FlatReservation closest;
+
+
+        for (FlatReservation res : parent1.getSchedule()) {
+            parent2.getSchedule().stream().filter(res2 -> res2.getTaskId().equals(res.getTaskId())).findAny().orElse(null);
+        }
+        //return rescheduled child
+        return null;
+    }
+
+
+
 
 }

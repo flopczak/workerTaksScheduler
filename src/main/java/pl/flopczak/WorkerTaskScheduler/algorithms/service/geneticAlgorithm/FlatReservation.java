@@ -21,9 +21,15 @@ public class FlatReservation {
     private Integer endTime;
     private AlgorithmType algorithmType;
     private Long taskId;
+    private Long processId;
     private Integer testNumber;
+    private Long taskDueTimeInMinutes;
 
     public static class FlatReservationBuilder {
         public FlatReservationBuilder(){}
+    }
+
+    public Integer getReservationDuration(){
+        return endTime - startTime;
     }
 }

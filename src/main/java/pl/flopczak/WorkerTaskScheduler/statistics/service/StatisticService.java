@@ -21,4 +21,8 @@ public class StatisticService implements IStatisticService {
     public List<StatisticDTO> findAll() {
         return StatisticsMapper.toDto((List<Statistic>) statisticRepository.findAll());
     }
+
+    public StatisticDTO findByTaskTypeAndWorkerName(Integer taskType, Integer workerName) {
+        return new StatisticDTO(statisticRepository.findByTaskTypeAndWorkerName(taskType, workerName));
+    }
 }

@@ -30,4 +30,13 @@ public class Task {
 
     private Instant dueDate; //nie może być mniejsze niż due date procesu
 
+    public TaskDTO toDTO() {
+        TaskDTO dto = new TaskDTO();
+        dto.setTaskId(this.taskId);
+        dto.setProcessId(this.process != null ? this.process.getProcessId() : null);
+        dto.setType(this.type);
+        dto.setDueDate(this.dueDate);
+        return dto;
+    }
+
 }
