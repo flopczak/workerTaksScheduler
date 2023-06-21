@@ -2,6 +2,7 @@ package pl.flopczak.WorkerTaskScheduler.algorithms.service;
 
 import org.springframework.stereotype.Service;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.FlatIndividual;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.GAToReturn;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.GeneticAlgorithm;
 import pl.flopczak.WorkerTaskScheduler.process.data.Process;
 import pl.flopczak.WorkerTaskScheduler.process.service.ProcessService;
@@ -35,15 +36,21 @@ public class AlgorithmsService {
         this.processService = processService;
     }
 
-    //potrzebne makeReservation
-    // tu działać na liście rezerwacji a potem dodać całą do bazy
-    // czas zacząć napierdalać ALGORYTMY KUREWSKIE!!
 
 
 
+    public GAToReturn geneticAlgorithm() {
+        List<Process> processes = processService.findAll();
+        GeneticAlgorithm ga = new GeneticAlgorithm(taskService.findAll(), statisticService.findAll(), processService, statisticService, processes);
+        ga.mainLoop();
+        return new GAToReturn(ga.getFitnesses(), ga.getBestEver());
+    }
 
-    public GeneticAlgorithm geneticAlgorithm() {
-        return new GeneticAlgorithm(taskService.findAll(), statisticService.findAll());
+    public FlatIndividual geneticAlgorithmBest() {
+        List<Process> processes = processService.findAll();
+        GeneticAlgorithm ga = new GeneticAlgorithm(taskService.findAll(), statisticService.findAll(), processService, statisticService, processes);
+        ga.mainLoop();
+        return ga.getBestEver();
     }
 
     public DepthFirstAlgorithm depthFirstAlgorithm() {

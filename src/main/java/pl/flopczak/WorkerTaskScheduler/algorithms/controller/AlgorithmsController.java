@@ -9,6 +9,7 @@ import pl.flopczak.WorkerTaskScheduler.algorithms.service.AlgorithmsService;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.BreadthFirstAlgorithm;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.DepthFirstAlgorithm;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.FlatIndividual;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.GAToReturn;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.GeneticAlgorithm;
 import pl.flopczak.WorkerTaskScheduler.reservation.data.ReservationDTO;
 
@@ -37,7 +38,10 @@ public class AlgorithmsController {
     }
 
     @GetMapping("/geneticAlgorithm")
-    public GeneticAlgorithm geneticAlgorithm() { return algorithmsService.geneticAlgorithm(); }
+    public GAToReturn geneticAlgorithm() { return algorithmsService.geneticAlgorithm(); }
+
+    @GetMapping("/geneticAlgorithmBest")
+    public FlatIndividual geneticAlgorithmBest() { return algorithmsService.geneticAlgorithmBest(); }
 
     @GetMapping("/depthFirstAlgorithm")
     public DepthFirstAlgorithm depthFirstAlgorithm() { return algorithmsService.depthFirstAlgorithm();}

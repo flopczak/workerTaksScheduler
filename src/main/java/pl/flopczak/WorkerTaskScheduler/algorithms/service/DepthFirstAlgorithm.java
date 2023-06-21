@@ -53,11 +53,11 @@ public class DepthFirstAlgorithm {
         }
         individual.setTimeFitnesse(FlatIndividualUtil.calculateTimeFitness(individual.getSchedule()));
         individual.setDueFitnesse(FlatIndividualUtil.calculateDueFitness(individual.getSchedule()));
-//        try {
-//            individual.initializeChartData();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            individual.initializeChartData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private List<FlatReservation> scheduleProcess(List<FlatReservation> optimisticReservations) {

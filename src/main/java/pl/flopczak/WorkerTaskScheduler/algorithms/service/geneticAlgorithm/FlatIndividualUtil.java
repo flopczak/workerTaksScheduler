@@ -1,6 +1,7 @@
 package pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm;
 
 import java.util.List;
+import java.util.Map;
 
 public class FlatIndividualUtil {
     public static Double calculateTimeFitness(List<FlatReservation> reservations) {
@@ -20,8 +21,27 @@ public class FlatIndividualUtil {
             toReturn += reservation.getTaskDueTimeInMinutes() - reservation.getEndTime();
         }
         if (toReturn != 0.0) {
-            return 1000.0/toReturn;
+            return toReturn/1000000.0;
         }
+        return toReturn;
+    }
+
+    public static Double timeUtilizationFitness(List<FlatReservation> reservations, Map<Integer, List<TimePeriod>> workersAvailabilities){
+        Double toReturn = 0.0;
+        //procent wolnego miejsca do zajętego do końca workerSchedule
+
+
+        //weź każdego pracownika z rezerwacji i znajdź tą która kończy się najpóźniej
+
+        //HA nie potrzeba rezerwacji... sprawdź kiedy zaczyna się ostatni TP w worker schedule wszystko przed tym to nieużytki
+
+        //zsumuj wolne sloty pracownika kończące się przed endTime ostatniej z rezerwacji
+//        for (FlatReservation reservation : reservations) {
+//            toReturn += reservation.getReservationDuration();
+//        }
+//        if (toReturn!= 0.0) {
+//            return 100.0/toReturn;
+//        }
         return toReturn;
     }
 }

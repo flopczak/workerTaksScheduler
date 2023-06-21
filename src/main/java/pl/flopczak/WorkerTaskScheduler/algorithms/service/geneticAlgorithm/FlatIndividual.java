@@ -17,14 +17,15 @@ import java.util.*;
 
 @Data
 public class FlatIndividual {
-
+    private Double timeFitnesse;
+    private Double dueFitnesse;
+    private ChartData chartData;
     private List<FlatReservation> schedule;
     private List<Task> availableTasks;
     private List<StatisticDTO> statistics;
-    private Double timeFitnesse;
-    private Double dueFitnesse;
+
     private Map<Integer, List<TimePeriod>> workersAvailabilities;
-    private ChartData chartData;
+
 
 
     public FlatIndividual(List<Task> availableTasks, List<StatisticDTO> statistics) {
@@ -36,7 +37,7 @@ public class FlatIndividual {
         this.dueFitnesse = 0.0;
     }
 
-    public void initializeChartData() throws IOException {
+    public void initializeChartData() {
         ChartData chartData1 = new ChartData();
         chartData1.setLabel("Workers Schedule");
         chartData1.setTitle("Workers Schedule");
@@ -64,8 +65,8 @@ public class FlatIndividual {
         chartData1.setBars(bars);
         chartData1.setBar_height(0.5);
         setChartData(chartData1);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        gson.toJson(chartData1, new FileWriter("C:\\Users\\Jakub\\Desktop\\Projekty\\json-to-gantt-master\\examples\\"+ System.currentTimeMillis()+schedule.get(0).getAlgorithmType()+".json"));
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        gson.toJson(chartData1, new FileWriter("C:\\Users\\Jakub\\Desktop\\Projekty\\json-to-gantt-master\\examples\\"+ System.currentTimeMillis()+schedule.get(0).getAlgorithmType()+".json"));
     }
 
     public void generateRandomSchedule() {
@@ -133,7 +134,7 @@ public class FlatIndividual {
     }
 
 
-    private List<FlatReservation> getPossibleReservations(Task task) {
+    public List<FlatReservation> getPossibleReservations(Task task) {
         List<StatisticDTO> statisticForGivenTask = statistics.stream().filter(statistic -> Objects.equals(statistic.getTaskType(), task.getType())).toList();
         List<FlatReservation> toReturn = new ArrayList<>();
         Long dueTimeInMinutes = (task.getDueDate().getEpochSecond() - SchedulingConstants.BEGGINING_OF_SCHEDULING.getEpochSecond()) / 60;
@@ -229,13 +230,11 @@ public class FlatIndividual {
 
 
 
-
-
     private Map<Integer, List<TimePeriod>> inicializeWorkerAvailabilityMap() {
         Map<Integer, List<TimePeriod>> workerAvailabilityMap = new HashMap<>();
         for (int i = 1; i <= 5; i++) {
             List<TimePeriod> tempList = new ArrayList<>();
-            tempList.add(new TimePeriod(0, 36000));
+            tempList.add(new TimePeriod(0, 2000));
             workerAvailabilityMap.put(i, tempList);
         }
         return workerAvailabilityMap;
