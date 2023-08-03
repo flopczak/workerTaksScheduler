@@ -39,7 +39,7 @@ public class FlatIndividual {
 
     public void initializeChartData() {
         ChartData chartData1 = new ChartData();
-        chartData1.setLabel("Workers Schedule");
+        chartData1.setLabel("Time");
         chartData1.setTitle("Workers Schedule");
         List<String> collors = Arrays.asList("yellow", "green", "blue", "purple", "red");
         List<LegendObject> legend = new ArrayList<>();
@@ -234,7 +234,7 @@ public class FlatIndividual {
         Map<Integer, List<TimePeriod>> workerAvailabilityMap = new HashMap<>();
         for (int i = 1; i <= 5; i++) {
             List<TimePeriod> tempList = new ArrayList<>();
-            tempList.add(new TimePeriod(0, 2000));
+            tempList.add(new TimePeriod(0, 36000));
             workerAvailabilityMap.put(i, tempList);
         }
         return workerAvailabilityMap;

@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.AlgorithmsService;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.BreadthFirstAlgorithm;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.DepthFirstAlgorithm;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.DFAlgorithm;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.FlatIndividual;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.NewBreadthFirstAlgorithm;
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.newGA.GA;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.GAToReturn;
-import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.GeneticAlgorithm;
+
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.newGA.NewGaToReturn;
 import pl.flopczak.WorkerTaskScheduler.reservation.data.ReservationDTO;
 
 import java.util.List;
@@ -47,4 +51,15 @@ public class AlgorithmsController {
     public DepthFirstAlgorithm depthFirstAlgorithm() { return algorithmsService.depthFirstAlgorithm();}
     @GetMapping("/breadthFirstAlgorithm")
     public BreadthFirstAlgorithm breadthFirstAlgorithm() { return algorithmsService.breadthFirstAlgorithm();}
+    @GetMapping("/newBF")
+    public NewBreadthFirstAlgorithm newbreadthFirstAlgorithm() { return algorithmsService.newBreadthFirstAlgorithm();}
+
+    @GetMapping("/DF")
+    public DFAlgorithm getDF() { return algorithmsService.newDFAlgorithm();}
+
+    @GetMapping("/GA")
+    public GA getGA() { return algorithmsService.gA();}
+
+    @GetMapping("/GA2")
+    public NewGaToReturn getGA2() { return algorithmsService.gaToReturn();}
 }

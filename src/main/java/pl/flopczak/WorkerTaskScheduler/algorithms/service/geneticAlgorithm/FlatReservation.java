@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import pl.flopczak.WorkerTaskScheduler.algorithms.service.AlgorithmType;
-
+import pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm.newGA.FlatReservationForCrossing;
 
 
 @Data
@@ -26,10 +26,21 @@ public class FlatReservation {
     private Long taskDueTimeInMinutes;
 
     public static class FlatReservationBuilder {
-        public FlatReservationBuilder(){}
+        public FlatReservationBuilder() {
+        }
     }
 
-    public Integer getReservationDuration(){
+    public FlatReservationForCrossing toCrossing() {
+        return FlatReservationForCrossing.builder()
+                .taskType(taskType)
+                .workerName(workerName)
+                .taskId(taskId)
+                .processId(processId)
+                .taskDueTimeInMinutes(taskDueTimeInMinutes)
+                .build();
+    }
+
+    public Integer getReservationDuration() {
         return endTime - startTime;
     }
 }

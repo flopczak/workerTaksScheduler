@@ -67,8 +67,8 @@ public class GeneticAlgorithm {
         for (int i = 0; i < GeneticAlgorithmConstans.MAX_GENERATIONS; i++) {
             //selekcja n - 1 osobników
             List<FlatIndividual> newPopulation = new ArrayList<>();
-            for (int j = 0; j < GeneticAlgorithmConstans.POPULATION_SIZE - 58; j++) {
-                FlatIndividual winner = tournamentSelection(3);
+            for (int j = 0; j < GeneticAlgorithmConstans.POPULATION_SIZE - 125; j++) {
+                FlatIndividual winner = tournamentSelection(7);
                 winner.initializeChartData();
                 newPopulation.add(winner);
             }
@@ -77,9 +77,10 @@ public class GeneticAlgorithm {
             newPopulation.sort(Comparator.comparing(flatIndividual -> flatIndividual.getDueFitnesse() + flatIndividual.getTimeFitnesse()));
             Integer lastElement = newPopulation.size() - 1;
 
-            for (int j = 0; j < 58; j++) {
-                FlatIndividual childIndividual = crossover(newPopulation.get(random.nextInt(newPopulation.size())), newPopulation.get(random.nextInt(newPopulation.size())));
+            for (int j = 0; j < 125; j++) {
+//                FlatIndividual childIndividual = crossover(newPopulation.get(random.nextInt(newPopulation.size())), newPopulation.get(random.nextInt(newPopulation.size())));
 //                childIndividual.initializeChartData();
+                FlatIndividual childIndividual = crossover(newPopulation.get(lastElement), newPopulation.get(random.nextInt(newPopulation.size())));
                 newPopulation.add(childIndividual);
             }
 
@@ -101,7 +102,7 @@ public class GeneticAlgorithm {
 
             //zapisz historyczne fitnessy
             saveFitnesses(newPopulation);
-
+            newPopulation.set(random.nextInt(newPopulation.size()),  bestEver);
             setPopulation(newPopulation);
         }
         bestEver.initializeChartData();
@@ -116,7 +117,6 @@ public class GeneticAlgorithm {
             toReturn.add(new Fitnesses(individual.getDueFitnesse(), individual.getTimeFitnesse()));
         }
         fitnesses.add(toReturn);
-
     }
 
     private FlatIndividual tournamentSelection(Integer tournamentSize) {
