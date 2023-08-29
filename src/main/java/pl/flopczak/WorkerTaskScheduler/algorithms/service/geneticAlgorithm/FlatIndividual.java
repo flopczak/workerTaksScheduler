@@ -1,7 +1,5 @@
 package pl.flopczak.WorkerTaskScheduler.algorithms.service.geneticAlgorithm;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.Data;
 import org.springframework.util.ObjectUtils;
 import pl.flopczak.WorkerTaskScheduler.SchedulingConstants;
@@ -11,8 +9,6 @@ import pl.flopczak.WorkerTaskScheduler.algorithms.service.DataRecord;
 import pl.flopczak.WorkerTaskScheduler.statistics.data.StatisticDTO;
 import pl.flopczak.WorkerTaskScheduler.task.data.Task;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
 @Data
@@ -65,8 +61,6 @@ public class FlatIndividual {
         chartData1.setBars(bars);
         chartData1.setBar_height(0.5);
         setChartData(chartData1);
-//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//        gson.toJson(chartData1, new FileWriter("C:\\Users\\Jakub\\Desktop\\Projekty\\json-to-gantt-master\\examples\\"+ System.currentTimeMillis()+schedule.get(0).getAlgorithmType()+".json"));
     }
 
     public void generateRandomSchedule() {
@@ -88,7 +82,7 @@ public class FlatIndividual {
     }
 
     public void scheduleTask(FlatReservation reservation) {
-        reservation.setReservationId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE); //generate uuid
+        reservation.setReservationId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
         schedule.add(reservation);
         List<TimePeriod> workerSchedule = workersAvailabilities.get(reservation.getWorkerName());
         TimePeriod before = new TimePeriod();
@@ -111,7 +105,6 @@ public class FlatIndividual {
                 }
                 break;
             }
-//            else throw new IllegalArgumentException("How it is even possible ive checked if i can make reservation before proposing it!");
         }
         if (before.getStartTime() == null) {
             TimePeriod finalToDelete = toDelete;
@@ -142,7 +135,7 @@ public class FlatIndividual {
             StatisticDTO statisticsForCurrentWorker = statisticForGivenTask.stream()
                     .filter(statistic -> statistic.getWorkerName().equals(workerEntry.getKey()))
                     .findFirst()
-                    .orElse(null); //TODO to denegerous but im sure that there is statistic for every worker
+                    .orElse(null);
             for (TimePeriod workerFreeToWorkTimePeriod : workerEntry.getValue()) {
                 if (workerFreeToWorkTimePeriod.getTimePeriodDuration() >= (statisticsForCurrentWorker.getEstimatedTimeInSeconds() / 60)) {
                     toReturn.add(FlatReservation.builder()
@@ -176,16 +169,12 @@ public class FlatIndividual {
             StatisticDTO statisticsForCurrentWorker = statisticForGivenTask.stream()
                     .filter(statistic -> statistic.getWorkerName().equals(workerEntry.getKey()))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("statistics are null how this happen")); //TODO to denegerous but im sure that there is statistic for every worker
+                    .orElseThrow(() -> new IllegalStateException("statistics are null"));
             for (TimePeriod workerFreeToWorkTimePeriod : workerEntry.getValue()) {
                 boolean test = isTaskBeforeEndTimeInRangeOfTimePeriod(workerFreeToWorkTimePeriod, endTimeTaskBefore);
-                if (!test) continue; //sprawdzenie czy zadanie może się zacząć w przedziale czasu w którym pracownik jest wolny
-
-                //powinienem sprawdzić czy również może się w nim skończyć tu
-                //następnie powinienem zwrócić przedział czasu w który zostanie zaalokowany
+                if (!test) continue;
                 startOfWorkerFreeTimeToTest = workerFreeToWorkTimePeriod.getStartTime();
 
-                // can do the work
                 if (workerFreeToWorkTimePeriod.getTimePeriodDuration() >= (statisticsForCurrentWorker.getEstimatedTimeInSeconds() / 60)) {
                     if (startOfWorkerFreeTimeToTest < endTimeTaskBefore) startOfWorkerFreeTimeToTest = endTimeTaskBefore;
                     if (bestWorkerEndTime == 0) {

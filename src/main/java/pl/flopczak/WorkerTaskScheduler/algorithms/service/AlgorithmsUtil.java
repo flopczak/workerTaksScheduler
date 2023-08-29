@@ -16,7 +16,6 @@ import static pl.flopczak.WorkerTaskScheduler.statistics.service.StatisticUtils.
 
 public class AlgorithmsUtil {
     public static List<ReservationDTO> startOptimisticAllocationConflicted(List<Process> processes, List<StatisticDTO> statistics) {
-        //Przydzielić jak najlepiej zasoby do zadań nie zwracając uwagi na konflikty zasobów
         List<ReservationDTO> optimisticReservationConflicted = new ArrayList<>();
         processes.sort(Comparator.comparing(Process::getDueDate));
         for (Process process : processes) {
@@ -34,7 +33,4 @@ public class AlgorithmsUtil {
         return optimisticReservationConflicted;
     }
 
-    public static void getFreeWorkersForTask(List<ReservationDTO> schedule, List<Worker> workers, Task task){
-        // sprawidzić kiedy kończy się zadanie??
-    }
 }

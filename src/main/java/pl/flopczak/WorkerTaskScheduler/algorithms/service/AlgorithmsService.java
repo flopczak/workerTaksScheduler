@@ -37,21 +37,6 @@ public class AlgorithmsService {
 
 
 
-
-    public GAToReturn geneticAlgorithm() {
-        List<Process> processes = processService.findAll();
-        GeneticAlgorithm ga = new GeneticAlgorithm(taskService.findAll(), statisticService.findAll(), processService, statisticService, processes);
-        ga.mainLoop();
-        return new GAToReturn(ga.getFitnesses(), ga.getBestEver());
-    }
-
-    public FlatIndividual geneticAlgorithmBest() {
-        List<Process> processes = processService.findAll();
-        GeneticAlgorithm ga = new GeneticAlgorithm(taskService.findAll(), statisticService.findAll(), processService, statisticService, processes);
-        ga.mainLoop();
-        return ga.getBestEver();
-    }
-
     public DepthFirstAlgorithm depthFirstAlgorithm() {
         List<Process> processes = processService.findAll();
         DepthFirstAlgorithm dp = new DepthFirstAlgorithm(statisticService.findAll(), taskService.findAll(), processes);

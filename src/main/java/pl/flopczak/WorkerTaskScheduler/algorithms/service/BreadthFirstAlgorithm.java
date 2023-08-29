@@ -47,7 +47,6 @@ public class BreadthFirstAlgorithm {
             Integer workerWithEarliestSlot = getWorkerWithEarliestSlot(workersSchedule);
             TimePeriod earliestTimePeriod = getEarliestTimePeriodForWorker(workersSchedule, workerWithEarliestSlot);
 
-            //zrobić coś jak nie ma kandydata żadnego
             List<TaskDTO> candidates = prepareCandidates(earliestTimePeriod, workerWithEarliestSlot);
             TaskDTO mostUrgentTask = getMostUrgentTask2(candidates);
             individual.scheduleTask(FlatReservation.builder()
@@ -115,13 +114,11 @@ public class BreadthFirstAlgorithm {
 
 
     private List<TaskDTO> prepareCandidates(TimePeriod timePeriod, Integer workerName) {
-        //przejdz po mapie stosów i sporządź listę zadań mogących zmiescić się w tp
         List<TaskDTO> candidates = new ArrayList<>();
 
         for (Map.Entry<Long, Stack<TaskDTO>> tasksEntry : taskStacks.entrySet()) {
             if (tasksEntry.getValue().isEmpty()) continue;
             TaskDTO topTask = tasksEntry.getValue().peek();
-            //sprawdzenie kiedy kończy się poprzednie zadanie
             Integer endTimeTaskBefore = 0;
             if (topTask.getType() != 1) {
                 List<FlatReservation> processReservations = individual.getSchedule().stream().filter(task-> task.getProcessId().equals(topTask.getProcessId())).toList();
@@ -201,43 +198,6 @@ public class BreadthFirstAlgorithm {
 
     private Long changeDueToMinutes(Instant due) {
         return (due.getEpochSecond() - SchedulingConstants.BEGGINING_OF_SCHEDULING.getEpochSecond()) / 60;
-    }
-
-    private Map<Long, List<FlatReservation>> optimisticAllocation() {
-        List<Process> localProcesses = new ArrayList<>(processes);
-        Map<Long, List<FlatReservation>> reservationsForEachProcess = new TreeMap<>();
-
-        //usunąć z zadań te które już mają rezerwację
-        for (Process process : localProcesses) {
-            List<Task> processTasks = process.getTaskList();
-            List<FlatReservation> reservationsForProcess = new ArrayList<>();
-            processTasks.sort(Comparator.comparing(Task::getType));
-            Long processDueGap = changeDueToMinutes(process.getDueDate());
-            Integer lastStart = 0;
-            for (Task task : processTasks) {
-                Pair<Integer, Integer> fastestForTask = getFastestWorkerForTask(task, statistics);
-                FlatReservation reservation = FlatReservation.builder()
-                        .startTime(lastStart)
-                        .endTime(lastStart + (fastestForTask.getSecond() / 60))
-                        .taskId(task.getTaskId())
-                        .taskType(task.getType())
-                        .processId(task.getProcess().getProcessId())
-                        .taskDueTimeInMinutes(changeDueToMinutes(task.getDueDate()))
-                        .workerName(fastestForTask.getFirst())
-                        .algorithmType(algorithmType)
-                        .testNumber(-1)
-                        .build();
-                processDueGap = processDueGap - (fastestForTask.getSecond() / 60);
-                lastStart += (fastestForTask.getSecond() / 60);
-                reservationsForProcess.add(reservation);
-            }
-            reservationsForEachProcess.put(processDueGap, reservationsForProcess);
-        }
-        return reservationsForEachProcess;
-    }
-
-    private void adjustOptimisticAllocation() {
-
     }
 
 }

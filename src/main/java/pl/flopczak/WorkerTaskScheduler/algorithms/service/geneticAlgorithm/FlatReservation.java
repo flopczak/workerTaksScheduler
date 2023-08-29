@@ -40,7 +40,4 @@ public class FlatReservation {
                 .build();
     }
 
-    public Integer getReservationDuration() {
-        return endTime - startTime;
-    }
 }

@@ -57,7 +57,6 @@ public class GA {
 
             for (int j = 0; j < GeneticAlgorithmConstans.POPULATION_SIZE - (GeneticAlgorithmConstans.POPULATION_SIZE * (1 - GeneticAlgorithmConstans.CROSSOVER_RATE)); j++) {
                 FlatIndividualForGA winner = tournamentSelection(GeneticAlgorithmConstans.TOURNAMET_SIZE);
-                winner.initializeChartData();
                 newPopulation.add(winner);
             }
 
@@ -76,13 +75,13 @@ public class GA {
                 child.fromEncodedSchedule(childScheduleToDecode);
                 child.setTimeFitnesse(FlatIndividualUtil.calculateTimeFitness(child.getWorkersAvailabilities()));
                 child.setDueFitnesse(FlatIndividualUtil.calculateDueFitness(child.getSchedule()));
-//                child.initializeChartData();
                 newPopulation.add(child);
             }
             newPopulation.add(elite);
 
 
             saveFitnesses(newPopulation);
+            setPopulation(newPopulation);
         }
         bestEver.initializeChartData();
     }
@@ -93,7 +92,6 @@ public class GA {
         List<FlatReservationForCrossing> child1 = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             Integer randomProcessId = processIds.remove(random.nextInt(processIds.size()));
-            //dupa czy chodzi że long
             List<FlatReservationForCrossing> processFromParent1 = parent1.stream().filter(reservation -> reservation.getProcessId().equals(randomProcessId.longValue())).toList();
             if (willMutate()) {
                 processFromParent1 = mutate(processFromParent1);
@@ -147,18 +145,18 @@ public class GA {
 
     private FlatIndividualForGA evaluateFitnesses(List<FlatIndividualForGA> tournament) {
         FlatIndividualForGA best = tournament.get(0);
-//        for (int i = 1; i < tournament.size(); i++) {
-//            Double combinedFitnessBest = (best.getDueFitnesse() + best.getTimeFitnesse()) / 2.0;
-//            Double combinedFitnessCurrent = (tournament.get(i).getDueFitnesse() + tournament.get(i).getTimeFitnesse()) / 2.0;
-//            if (combinedFitnessBest < combinedFitnessCurrent) {
-//                best = tournament.get(i);
-//            }
-//        }
         for (int i = 1; i < tournament.size(); i++) {
-            if (best.getTimeFitnesse() < tournament.get(i).getTimeFitnesse()) {
+            Double combinedFitnessBest = (best.getDueFitnesse() + 1.5*best.getTimeFitnesse()) / 2.0;
+            Double combinedFitnessCurrent = (tournament.get(i).getDueFitnesse() + 1.6*tournament.get(i).getTimeFitnesse()) / 2.0;
+            if (combinedFitnessBest < combinedFitnessCurrent) {
                 best = tournament.get(i);
             }
         }
+//        for (int i = 1; i < tournament.size(); i++) {
+//            if (best.getTimeFitnesse() < tournament.get(i).getTimeFitnesse()) {
+//                best = tournament.get(i);
+//            }
+//        }
         return best;
     }
 
@@ -185,7 +183,7 @@ public class GA {
             if (bestEver != null) {
                 populationForBestEver.add(bestEver);
             }
-            bestEver = evaluateFitnesses(populationForBestEver);
+            bestEver =  evaluateFitnesses(populationForBestEver);
             toReturn.add(new NewFitnesses(individual.getTimeFitnesse(), individual.getDueFitnesse()));
         }
         fitnesses.add(toReturn);

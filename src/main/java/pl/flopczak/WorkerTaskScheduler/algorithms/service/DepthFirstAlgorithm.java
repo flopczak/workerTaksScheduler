@@ -80,8 +80,6 @@ public class DepthFirstAlgorithm {
 
 
     private Map<Long, List<FlatReservation>> optimisticAllocation() {
-        //do każdej instancji procesu przydzielić najlepsze opcje i sprawidzić która ma najmniejszy czas due
-        //uszeregować procesy od najbardziej zagrorzonyc i przydzielić im najlepsze zasoby uznajmy że ważna jest kolejność zadań
         List<Process> localProcesses = new ArrayList<>(processes);
         Map<Long, List<FlatReservation>> reservationsForEachProcess = new TreeMap<>();
         for (Process process : localProcesses) {

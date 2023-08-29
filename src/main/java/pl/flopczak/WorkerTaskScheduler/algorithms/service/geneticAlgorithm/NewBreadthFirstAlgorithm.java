@@ -39,23 +39,17 @@ public class NewBreadthFirstAlgorithm {
 
 
     public void scheduleTasks() {
-        //change to wihle loop and work on copy
         int tasksToSchedule = tasks.size();
         int iteration = 0;
         while (tasksToSchedule > 0) {
             Map<Integer, List<TimePeriod>> workersSchedule = individual.getWorkersAvailabilities();
-//            Integer worker = getWorkerWithEarliestSlot(workersSchedule);
-//            List<TimePeriod> chosenWorkerAvailability = individual.getWorkersAvailabilities().get(worker);
             FlatReservation chosen = null;
             Pair<Integer,TimePeriod> pair = getWorkerWithEarliestSlot2(workersSchedule);
-            //zamiast tej pętli getWorkerWith earlest slot zwraca tp do przydzielena
-//            for (TimePeriod tp : chosenWorkerAvailability) {
                 List<FlatReservation> candidates = prepareCandidates2(pair.getSecond(), pair.getFirst());
                 iteration++;
-                if (iteration > 10000) throw new IllegalStateException("nieskończona pętla");
+                if (iteration > 10000) throw new IllegalStateException("");
                 if (candidates.isEmpty()) continue;
-                chosen = getMostUrgentTask(candidates);//tu zmienić na heurystkę
-//            }
+                chosen = getMostUrgentTask(candidates);
             if (chosen == null) continue;
             individual.scheduleTask(chosen);
             updateStack(chosen);
@@ -113,13 +107,11 @@ public class NewBreadthFirstAlgorithm {
 
 
     private List<TaskDTO> prepareCandidates(TimePeriod timePeriod, Integer workerName) {
-        //przejdz po mapie stosów i sporządź listę zadań mogących zmiescić się w tp
         List<TaskDTO> candidates = new ArrayList<>();
 
         for (Map.Entry<Long, Stack<TaskDTO>> tasksEntry : taskStacks.entrySet()) {
             if (tasksEntry.getValue().isEmpty()) continue;
             TaskDTO topTask = tasksEntry.getValue().peek();
-            //sprawdzenie kiedy kończy się poprzednie zadanie
             Integer endTimeTaskBefore = 0;
             if (topTask.getType() != 1) {
                 List<FlatReservation> processReservations = individual.getSchedule().stream().filter(task -> task.getProcessId().equals(topTask.getProcessId())).toList();
@@ -138,40 +130,11 @@ public class NewBreadthFirstAlgorithm {
         return candidates;
     }
 
-    private Integer getWorkerWithEarliestSlot(Map<Integer, List<TimePeriod>> workersSchedule) {
-        Integer workerWithEarliestSlot = null;
-        Integer earliestStartTime = null;
-        //can have at least one reservation
-        for (Map.Entry<Integer, List<TimePeriod>> entry : workersSchedule.entrySet()) {
-            List<TimePeriod> timePeriods = entry.getValue();
-            if (timePeriods.isEmpty()) {
-                continue;
-            }
-            List<TaskDTO> currentPossibleTasks = currentPossibleTasks();
-            for (TimePeriod tp : timePeriods) {
-                boolean canDoAnyTask = canDoAnyTask(tp, currentPossibleTasks, entry.getKey());
-                if (canDoAnyTask) {
-                    if (workerWithEarliestSlot == null) {
-                        workerWithEarliestSlot = entry.getKey();
-                        earliestStartTime = tp.getStartTime();
-                    } else {
-                        if (tp.getStartTime() < earliestStartTime) {
-                            workerWithEarliestSlot = entry.getKey();
-                            earliestStartTime = tp.getStartTime();
-                        }
-                    }
-                }
-            }
-
-        }
-        return workerWithEarliestSlot;
-    }
 
     private Pair<Integer,TimePeriod> getWorkerWithEarliestSlot2(Map<Integer, List<TimePeriod>> workersSchedule) {
         TimePeriod workerWithEarliestSlot = null;
         Integer workerWithEarliestSlotName = null;
         Integer earliestStartTime = null;
-        //can have at least one reservation
         for (Map.Entry<Integer, List<TimePeriod>> entry : workersSchedule.entrySet()) {
             List<TimePeriod> timePeriods = entry.getValue();
             if (timePeriods.isEmpty()) {
@@ -201,7 +164,6 @@ public class NewBreadthFirstAlgorithm {
 
 
     private boolean canDoAnyTask(TimePeriod timePeriod, List<TaskDTO> tasks, Integer workerName) {
-        // sprawdzić kiedy kończy się zadanie przed
         boolean toReturn = false;
         for (TaskDTO task : tasks) {
             Integer endTimeTaskBefore = getTaskBeforeEndTime(task);
@@ -227,10 +189,6 @@ public class NewBreadthFirstAlgorithm {
         return currentPossibleTasks;
     }
 
-    private TimePeriod getEarliestTimePeriodForWorker(Map<Integer, List<TimePeriod>> workersSchedule, Integer workerName) {
-        List<TimePeriod> timePeriods = workersSchedule.get(workerName);
-        return timePeriods.get(0);
-    }
 
     private Map<Long, Stack<TaskDTO>> initializeTasksStacks() {
         Map<Long, Stack<TaskDTO>> toReturn = new HashMap<>();
@@ -256,59 +214,18 @@ public class NewBreadthFirstAlgorithm {
         return false;
     }
 
-    public Integer getEstimatedTimeInMinutesForTaskAndWorker(Integer taskType, Integer workerName) {
-        StatisticDTO result = statisticService.findByTaskTypeAndWorkerName(taskType, workerName);
-        if (result == null) {
-            return null;
-        }
-        return result.getEstimatedTimeInSeconds() / 60;
-    }
 
     private Long changeDueToMinutes(Instant due) {
         return (due.getEpochSecond() - SchedulingConstants.BEGGINING_OF_SCHEDULING.getEpochSecond()) / 60;
     }
 
-    private Map<Long, List<FlatReservation>> optimisticAllocation() {
-        List<Process> localProcesses = new ArrayList<>(processes);
-        Map<Long, List<FlatReservation>> reservationsForEachProcess = new TreeMap<>();
-
-        //usunąć z zadań te które już mają rezerwację
-        for (Process process : localProcesses) {
-            List<Task> processTasks = process.getTaskList();
-            List<FlatReservation> reservationsForProcess = new ArrayList<>();
-            processTasks.sort(Comparator.comparing(Task::getType));
-            Long processDueGap = changeDueToMinutes(process.getDueDate());
-            Integer lastStart = 0;
-            for (Task task : processTasks) {
-                Pair<Integer, Integer> fastestForTask = getFastestWorkerForTask(task, statistics);
-                FlatReservation reservation = FlatReservation.builder()
-                        .startTime(lastStart)
-                        .endTime(lastStart + (fastestForTask.getSecond() / 60))
-                        .taskId(task.getTaskId())
-                        .taskType(task.getType())
-                        .processId(task.getProcess().getProcessId())
-                        .taskDueTimeInMinutes(changeDueToMinutes(task.getDueDate()))
-                        .workerName(fastestForTask.getFirst())
-                        .algorithmType(algorithmType)
-                        .testNumber(-1)
-                        .build();
-                processDueGap = processDueGap - (fastestForTask.getSecond() / 60);
-                lastStart += (fastestForTask.getSecond() / 60);
-                reservationsForProcess.add(reservation);
-            }
-            reservationsForEachProcess.put(processDueGap, reservationsForProcess);
-        }
-        return reservationsForEachProcess;
-    }
 
     private List<FlatReservation> prepareCandidates2(TimePeriod timePeriod, Integer workerName) {
-        //przejdz po mapie stosów i sporządź listę zadań mogących zmiescić się w tp
         List<FlatReservation> candidates = new ArrayList<>();
 
         for (Map.Entry<Long, Stack<TaskDTO>> tasksEntry : taskStacks.entrySet()) {
             if (tasksEntry.getValue().isEmpty()) continue;
             TaskDTO topTask = tasksEntry.getValue().peek();
-            //to powinno być sprawdzenie czy end time taks before + end time task się zmiesci
             Integer endTimeTaskBefore = getTaskBeforeEndTime(topTask);
             if (endTimeTaskBefore < timePeriod.getEndTime()) {
                 StatisticDTO result = statisticService.findByTaskTypeAndWorkerName(topTask.getType(), workerName);
@@ -328,7 +245,7 @@ public class NewBreadthFirstAlgorithm {
                                 .build());
                     }
 
-                }//tu else
+                }
                 if (endTimeTaskBefore <= timePeriod.getStartTime() && (willTaskFillInTimePeriod2(topTask, timePeriod.getTimePeriodDuration(), workerName))) {
                     candidates.add(FlatReservation.builder()
                             .reservationId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE)

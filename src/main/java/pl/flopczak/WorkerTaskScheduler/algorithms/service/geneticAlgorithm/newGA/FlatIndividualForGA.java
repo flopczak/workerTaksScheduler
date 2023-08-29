@@ -64,9 +64,7 @@ public class FlatIndividualForGA {
         processToSchedule.sort(Comparator.comparing(FlatReservationForCrossing::getTaskType));
         Integer lastTaskEndTime = 0;
         for (FlatReservationForCrossing task : processToSchedule) {
-            //sprawdamy ile pracownik będzie wykonywał dane zadanie
             Integer taskDurationInMinutes = statisticService.findByTaskTypeAndWorkerName(task.getTaskType(), task.getWorkerName()).getEstimatedTimeInSeconds() / 60;
-            //bierzemy schedule pracowników i pierwszy możliwy timeperiod w którym pracownik może wykonać zadanie (ostanie zadanie endTime+ statistics)
 
             List<TimePeriod> workerPeriods = workersAvailabilities.get(task.getWorkerName());
             for (TimePeriod timePeriod : workerPeriods) {
@@ -107,7 +105,6 @@ public class FlatIndividualForGA {
     }
 
     public void initializeRandomSchedule() {
-        //change to wihle loop and work on copy
         int tasksToSchedule = availableTasks.size();
         int iteration = 0;
         while (tasksToSchedule > 0) {
@@ -187,13 +184,11 @@ public class FlatIndividualForGA {
     }
 
     private List<FlatReservation> prepareCandidates(TimePeriod timePeriod, Integer workerName) {
-        //przejdz po mapie stosów i sporządź listę zadań mogących zmiescić się w tp
         List<FlatReservation> candidates = new ArrayList<>();
 
         for (Map.Entry<Long, Stack<TaskDTO>> tasksEntry : taskStacks.entrySet()) {
             if (tasksEntry.getValue().isEmpty()) continue;
             TaskDTO topTask = tasksEntry.getValue().peek();
-            //to powinno być sprawdzenie czy end time taks before + end time task się zmiesci
             Integer endTimeTaskBefore = getTaskBeforeEndTime(topTask);
             if (endTimeTaskBefore < timePeriod.getEndTime()) {
                 StatisticDTO result = statisticService.findByTaskTypeAndWorkerName(topTask.getType(), workerName);
@@ -213,7 +208,7 @@ public class FlatIndividualForGA {
                                 .build());
                     }
 
-                }//tu else
+                }
                 if (endTimeTaskBefore <= timePeriod.getStartTime() && (willTaskFillInTimePeriod(topTask, timePeriod.getTimePeriodDuration(), workerName))) {
                     candidates.add(FlatReservation.builder()
                             .reservationId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE)
@@ -286,8 +281,6 @@ public class FlatIndividualForGA {
         chartData1.setBars(bars);
         chartData1.setBar_height(0.5);
         setChartData(chartData1);
-//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//        gson.toJson(chartData1, new FileWriter("C:\\Users\\Jakub\\Desktop\\Projekty\\json-to-gantt-master\\examples\\"+ System.currentTimeMillis()+schedule.get(0).getAlgorithmType()+".json"));
     }
 
     private Long changeDueToMinutes(Instant due) {
@@ -302,14 +295,6 @@ public class FlatIndividualForGA {
             workerAvailabilityMap.put(i, tempList);
         }
         return workerAvailabilityMap;
-    }
-
-    public Integer getEstimatedTimeInMinutesForTaskAndWorker(Integer taskType, Integer workerName) {
-        StatisticDTO result = statisticService.findByTaskTypeAndWorkerName(taskType, workerName);
-        if (result == null) {
-            return null;
-        }
-        return result.getEstimatedTimeInSeconds() / 60;
     }
 
     private void updateStack(FlatReservation task) {
